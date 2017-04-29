@@ -1,0 +1,5 @@
+tabs : http://www.flaticon.com/free-icon/tabs_149210
+exit : http://www.flaticon.com/free-icon/exit_149407
+open-folder-outline : http://www.flaticon.com/free-icon/open-folder-outline_25402
+save : http://www.flaticon.com/free-icon/diskette_260897
+save-as : http://www.flaticon.com/free-icon/save-as_1539

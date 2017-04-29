@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/File">
+        <file alias="New">png/File/tabs.png</file>
+        <file alias="Save">png/File/save.png</file>
+        <file alias="Save_As">png/File/save-as.png</file>
+        <file alias="Exit">png/File/exit.png</file>
+        <file>png/File/open-file.png</file>
+        <file>png/File/delete.png</file>
+        <file>png/File/openAll.png</file>
+        <file>png/File/print.png</file>
+    </qresource>
+    <qresource prefix="/WindowIcon">
+        <file alias="WindowIcon">png/WindowIcon/write.png</file>
+        <file>png/WindowIcon/text-editor.png</file>
+    </qresource>
+    <qresource prefix="/Edit">
+        <file alias="Undo">png/Edit/undo.png</file>
+        <file alias="Redo">png/Edit/redo.png</file>
+        <file alias="Copy">png/Edit/copy.png</file>
+        <file alias="Cut">png/Edit/cut.png</file>
+        <file alias="Paste">png/Edit/paste.png</file>
+        <file alias="Select_All">png/Edit/select-all.png</file>
+    </qresource>
+    <qresource prefix="/Tool">
+        <file>png/Tool/find.png</file>
+        <file>png/Tool/font.png</file>
+    </qresource>
+    <qresource prefix="/View">
+        <file>png/View/fullscreen.png</file>
+        <file>png/View/normalscreen.png</file>
+    </qresource>
+</RCC>

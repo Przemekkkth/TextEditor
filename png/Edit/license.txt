@@ -1,0 +1,6 @@
+undo : http://www.flaticon.com/free-icon/undo_126615
+redo : http://www.flaticon.com/free-icon/redo_126636
+copy : http://www.flaticon.com/free-icon/copy_132974
+cut : http://www.flaticon.com/free-icon/cut_211342
+paste: http://www.flaticon.com/free-icon/paste_178922
+select all : http://www.flaticon.com/free-icon/select-all_60833
