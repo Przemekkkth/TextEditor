@@ -3,6 +3,8 @@
 #include "goto.h"
 
 #include <QObject>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QEvent>
 #include <QMimeData>
 #include <QTextEdit>
@@ -24,7 +26,7 @@
 #include <QDateTime>
 #include <QDropEvent>
 #include <QDragEnterEvent>
-
+#include <QDockWidget>
 
 
 QStringList MainWindow::recentStringFiles;
@@ -33,9 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 
-    m_textEdit = new QTextEdit(this);
-    m_textEdit->setAcceptDrops(false);
-    setAcceptDrops(true);
+   createWidgetsAndSettings();
     m_savedString = m_actualString = m_textEdit->toPlainText();
     m_FontsDialog = new Fonts;
     m_GoTo = new GoTo;
@@ -44,10 +44,12 @@ MainWindow::MainWindow(QWidget *parent)
     m_PathFile  = "";
     m_cursorInformation = new QLabel;
     m_nameFile = new QLabel;
+
+
     //filters
     m_cursorInformation->installEventFilter(this);
 
-    setCentralWidget(m_textEdit);
+    //setCentralWidget(m_textEdit);
     setWindowModified(false);
     setMinimumSize(640, 480);
     setWindowTitle(tr("%1[*] - text editor").arg(m_FileName));
@@ -60,7 +62,8 @@ MainWindow::MainWindow(QWidget *parent)
     createContextMenu();
     createStatusBar();
     createToolBar();
-   // statusBar()->showMessage(tr("Text Editor"),2000);
+
+
     readSettings();
 
     connect(m_textEdit, SIGNAL(textChanged()), this, SLOT(updateStatusBar()));
@@ -94,7 +97,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_AboutQtAction, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
 
     connect(m_textEdit, SIGNAL(textChanged()), this, SLOT(checkModifity()));
-
+    connect(m_textEdit, SIGNAL(textChanged()), this, SLOT(updateCounterRows()));
 
     // Font Dialog
     connect(m_FontsDialog, SIGNAL(setItalic(bool)), m_textEdit, SLOT(setFontItalic(bool)));
@@ -238,6 +241,7 @@ void MainWindow::createActions()
     //
     m_FontsAction = new QAction(QIcon(":/Tool/png/Tool/font.png"),tr("Fonts"), this);
     m_FindAction = new QAction(QIcon(":/Tool/png/Tool/find.png"),tr("Find"), this);
+    m_FindAction->setShortcut(QKeySequence::Find);
     m_AboutSoftAction = new QAction(tr("About Software"), this);
     m_AboutQtAction = new QAction(tr("About Qt"), this);
     //
@@ -296,8 +300,9 @@ void MainWindow::createMenus()
     m_SettingsMenu->addAction(m_AboutQtAction);
 
 
-    //connect(m_textEdit->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)) );
+    connect(m_textEdit->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)) );
     connect(m_textEdit, SIGNAL(copyAvailable(bool)), m_CutAction, SLOT(setEnabled(bool)));
+    connect(m_textEdit, SIGNAL(copyAvailable(bool)), m_CopyAction, SLOT(setEnabled(bool)));
 
 }
 
@@ -670,9 +675,6 @@ void MainWindow::aboutSoft()
 
 void MainWindow::updateStatusBar()
 {
-
-
-  //  statusBar()->showMessage(tr("%1\tCols:%2\tRows:%3\tLrngth: %4").arg(m_FileName).arg(m_textEdit->textCursor().blockNumber()).arg(m_textEdit->toPlainText().contains("\n")).arg(m_textEdit->textCursor().position()));
    m_cursorInformation->setText(tr("Cols:%1\tRows:%2\tLength: %3").arg(m_textEdit->textCursor().columnNumber()).arg(m_textEdit->textCursor().blockNumber()).arg(m_textEdit->textCursor().position()));
    m_nameFile->setText(tr("%1").arg(m_FileName));
 }
@@ -686,16 +688,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *evt)
             QMouseEvent *event = static_cast<QMouseEvent*>(evt);
             if(event->button() == Qt::LeftButton)
             {
-            /*    QMessageBox::about(this, "Summary", tr("Full file path: %1\n"
-                                                       "Created: %2\n"
-                                                       "LastModified: %3\n"
-                                                       "LastRead: %4\n").arg(m_PathFile).arg(QFileInfo(m_PathFile).created().toString().arg(QFileInfo(m_PathFile).lastModified().toString()).arg(QFileInfo(m_PathFile).lastRead().toString()))
-                                                        );*/
-          /*   QMessageBox::about(this, "Summary", tr("Full file path: %1 \n"
-                                                       "Created: %2 \n"
-                                                       "LastModified: %3 \n"
-                                                       "LastRead: %4 \n").arg(m_PathFile, QFileInfo(m_PathFile).created().toString() ,QFileInfo(m_PathFile).lastModified().toString(), QFileInfo(m_PathFile).lastRead().toString())
-                                                                       );*/
                 if(m_PathFile.isEmpty()){
                     QMessageBox::about(this, "Summary", tr("Full file path: untitled \n"
                                                                            "Created: 00:00:00 \n"
@@ -777,3 +769,45 @@ void MainWindow::setBoldFont(bool a)
         m_textEdit->setFontWeight(50);
     }
 }
+
+void MainWindow::updateCounterRows()
+{
+    int rowCount = m_textEdit->textCursor().blockNumber();
+    m_textEdit->setFont(m_textEdit->font());
+    QString text("");
+    for(int i = 0 ; i < rowCount + 1; ++i)
+    {
+        text.append(QString::number(i)+"\n");
+    }
+
+    m_countRowLabel->setText(text);
+}
+
+void MainWindow::createWidgetsAndSettings()
+{
+    m_textEdit = new QTextEdit;
+    m_textEdit->setAcceptDrops(false);
+    setAcceptDrops(true);
+    m_centralWidget = new QWidget;
+    m_countRowLabel = new QLabel;
+    m_textEdit = new QTextEdit;
+    QVBoxLayout *vboxlayout = new QVBoxLayout;
+    QHBoxLayout *hboxlayout = new QHBoxLayout;
+    vboxlayout->addSpacing(4);
+    vboxlayout->addWidget(m_countRowLabel);
+    vboxlayout->addSpacing(4);
+
+    m_countRowLabel->setText("0");
+    m_countRowLabel->setMinimumWidth(40);
+    m_countRowLabel->setMaximumWidth(40);
+    m_countRowLabel->setAlignment(Qt::AlignHCenter);
+    m_countRowLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    m_countRowLabel->setStyleSheet("background-color : grey;");
+    m_textEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    hboxlayout->addLayout(vboxlayout);
+    hboxlayout->addWidget(m_textEdit);
+
+    m_centralWidget->setLayout(hboxlayout);
+    setCentralWidget(m_centralWidget);
+}
+

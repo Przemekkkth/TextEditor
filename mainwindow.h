@@ -11,7 +11,8 @@ class QLabel;
 class QPrinter;
 class QTextEdit;
 class QToolBar;
-
+class QDockWidget;
+class QWidget;
 
 class Fonts;
 class GoTo;
@@ -36,7 +37,11 @@ private:
     static QStringList recentStringFiles;
     enum { MaxRecentFiles = 5 };
     //Central Widget
+    QWidget *m_centralWidget;
+    QWidget *m_leftWidget;
+    QWidget *m_rightWidget;
     QTextEdit *m_textEdit;
+    QDockWidget *m_dockedWidget;
     //Variable to operate on files
     QString m_FileName;
     QString m_PathFile;
@@ -66,12 +71,15 @@ private:
     //Labels
     QLabel *m_nameFile;
     QLabel *m_cursorInformation;
+    QLabel *m_countRowLabel;
     //Function
     void createActions();
     void createMenus();
     void createContextMenu();
     void createStatusBar();
+
     void createToolBar();
+    void createWidgetsAndSettings();
     void readSettings();
     void writeSettings();
 
@@ -79,6 +87,9 @@ private:
     void newFileAction();
     bool ReadFile(QString);
     void SaveFile(QString);
+
+
+
 private slots:
     void newFile();
     void newApp();
@@ -93,6 +104,7 @@ private slots:
     void openAllRecentFiles();
     void deleteAllRecentFiles();
     void updateStatusBar();
+    void updateCounterRows();
     void aboutSoft();
 
 
